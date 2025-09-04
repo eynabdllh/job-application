@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
 import { useSearchParams } from 'next/navigation';
 import toast, { Toaster } from 'react-hot-toast';
 import { Check, User, Briefcase, FileText, Send, UploadCloud, ArrowLeft, RotateCw, File, X as XIcon } from "lucide-react";
@@ -30,7 +30,7 @@ const steps = [
   { id: 4, name: 'Review & Submit' },
 ];
 
-export default function ApplyPage() {
+function ApplyPageContent() {
   const fileInputRef = useRef(null);
   const searchParams = useSearchParams();
   const projectFromURL = searchParams.get('project');
@@ -236,6 +236,14 @@ export default function ApplyPage() {
       </main>
       <GetInTouchFooter />
     </div>
+  );
+}
+
+export default function ApplyPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading…</div>}>
+      <ApplyPageContent />
+    </Suspense>
   );
 }
 
