@@ -12,10 +12,6 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <head>
-        <link rel="icon" href="/title_logo.png" />
-      </head>
-      {/* REVERT: The body tag should be clean */}
       <body>{children}</body>
     </html>
   );
