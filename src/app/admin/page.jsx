@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
-import { supabase } from '@/lib/supabase' // Make sure this is your configured Supabase client
+import { supabase } from '@/lib/supabase' 
 import AdminHeader from '@/components/AdminHeader'
 import StatusCards from '@/components/StatusCards' 
 import toast, { Toaster } from 'react-hot-toast'
@@ -134,6 +134,15 @@ export default function AdminDashboard() {
       router.push('/admin/login')
     } else if (admin) {
       fetchApplications()
+      
+      // Auto-refresh every 3 seconds to check for new applications
+      const refreshInterval = setInterval(() => {
+        fetchApplications()
+      }, 3000)
+
+      return () => {
+        clearInterval(refreshInterval)
+      }
     }
   }, [admin, authLoading, router])
 
@@ -146,7 +155,7 @@ export default function AdminDashboard() {
         .order('submitted_at', { ascending: false });
       
       if (error) throw error;
-      setApplications(data || []); // Ensure data is an array
+      setApplications(data || []); 
     } catch (error) {
       toast.error('Failed to fetch applications.');
       console.error('Fetch error:', error);
@@ -168,10 +177,17 @@ export default function AdminDashboard() {
         const err = await resp.json().catch(() => ({}));
         throw new Error(err.error || 'Failed to update');
       }
-      // No toast per requirements
+      
+      if (newStatus === 'approved') {
+        toast.success('Application approved successfully!');
+      } else if (newStatus === 'rejected') {
+        toast.success('Application rejected successfully!');
+      }
+      
     } catch (error) {
       setApplications(originalApplications);
       console.error('Update error:', error);
+      toast.error('Failed to update application status');
     }
   };
   

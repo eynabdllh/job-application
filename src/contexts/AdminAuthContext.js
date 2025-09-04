@@ -57,7 +57,6 @@ export function AdminAuthProvider({ children }) {
 
   const login = async (email, password) => {
     try {
-      // First, check hardcoded admin credentials
       if (email === 'admin@lifewood.com' && password === 'admin123') {
         const adminData = {
           id: 'default-admin',
@@ -69,7 +68,6 @@ export function AdminAuthProvider({ children }) {
         return { success: true }
       }
 
-      // If not hardcoded, try database authentication
       const response = await fetch('/api/admin/auth', {
         method: 'POST',
         headers: {

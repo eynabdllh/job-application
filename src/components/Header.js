@@ -106,5 +106,3 @@ export default function Header({ navLinks = [
   </header>
   );
 }
-
-

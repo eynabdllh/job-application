@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation'
 import { Hourglass, FileSearch, CheckCircle, XCircle } from 'lucide-react'
 
-// Reusable Card styled to match your UI
 const Card = ({ title, subtitle, Icon, gradientFrom, gradientTo, iconColor, count, onClick }) => {
   return (
     <button
@@ -50,7 +49,6 @@ export default function StatusCards({ applications }) {
 
   const getStatusCount = (status) => applications.filter(app => app.status === status).length
 
-  // Match database statuses exactly: pending, reviewing, approved, rejected
   const statusConfigs = [
     {
       status: 'pending',

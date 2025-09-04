@@ -77,8 +77,7 @@ export default function ProjectsPage() {
 
       <Header/>
 
-      {/* Hero Section with Dark Green Background */}
-      {/* MODIFICATION: Added pb-48 for bottom padding to make space for the overlapping cards */}
+      {/* Hero Section*/}
       <article className="pt-32 sm:pt-32 w-full flex items-center justify-center relative z-10 pb-48" style={{ backgroundColor: '#133020' }}>
         <div className="w-fit max-w-4xl mx-auto text-center space-y-6 px-4">
           <TimelineContent
@@ -107,7 +106,6 @@ export default function ProjectsPage() {
       </article>
 
       {/* Projects Grid */}
-      {/* MODIFICATION: Added -mt-40 to pull the grid up and z-20 to ensure it overlaps correctly */}
       <section className="max-w-7xl mx-auto px-4 py-16 relative z-20 -mt-40">
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.map((project, index) => (
@@ -117,7 +115,6 @@ export default function ProjectsPage() {
               animationNum={2}
               timelineRef={heroRef}
               customVariants={revealVariants}
-              // MODIFICATION: Added shadow-lg for default depth and hover:shadow-2xl for a stronger hover effect
               className={`bg-white rounded-2xl border border-[#133020]/10 p-8 shadow-lg hover:shadow-2xl transition-all duration-300 group h-full flex flex-col`}
             >
               <div className="w-16 h-16 mb-6 bg-[#046241]/10 rounded-xl flex items-center justify-center text-[#046241] group-hover:bg-[#046241] group-hover:text-white transition-all duration-300">

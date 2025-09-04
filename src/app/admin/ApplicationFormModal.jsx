@@ -51,7 +51,7 @@ export default function ApplicationFormModal({ open, onClose, initialData, onSav
       } else {
         setForm(defaultFormState);
       }
-      setErrors({}); // Clear errors when modal opens
+      setErrors({}); 
     }
   }, [open, initialData]);
 
@@ -97,7 +97,6 @@ export default function ApplicationFormModal({ open, onClose, initialData, onSav
       // 1. Handle file upload if a new file is present
       if (form.resume) {
         const file = form.resume;
-        // In a real app, you might want to delete the old file first if editing
         const filePath = `${form.email}/${Date.now()}_${file.name}`;
         
         const { error: uploadError } = await supabase.storage
@@ -137,7 +136,7 @@ export default function ApplicationFormModal({ open, onClose, initialData, onSav
         toast.success('Application added successfully!');
       }
 
-      onSaved(); // This function should refetch the data on the main page
+      onSaved(); 
       onClose();
 
     } catch (err) {
@@ -223,7 +222,6 @@ export default function ApplicationFormModal({ open, onClose, initialData, onSav
   )
 }
 
-// Reusable Field Components with Error Styling
 const InputField = ({ label, className = '', error, ...props }) => (
   <div className={className}>
     <label className="block text-sm font-semibold text-gray-700 mb-1">{label}</label>
@@ -251,7 +249,6 @@ const TextareaField = ({ label, className = '', error, ...props }) => (
 );
 
 
-// Dedicated File Upload Component
 const FileUpload = ({ isEdit, resumeUrl, currentFile, onChange, error }) => {
   const path = typeof resumeUrl === 'string' ? resumeUrl : '';
   const { data } = supabase.storage.from('resumes').getPublicUrl(path);

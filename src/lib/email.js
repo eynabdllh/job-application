@@ -12,7 +12,7 @@ export async function sendEmail({ to, subject, html }) {
 
     console.log('Attempting to send email:', { to, subject });
 
-    const transporter = nodemailer.createTransporter({
+    const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: gmailUser,

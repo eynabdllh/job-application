@@ -302,7 +302,7 @@ const Step2 = ({ formData, handleChange, errors }) => (
       error={errors.experience_details}
       placeholder="Describe your roles, projects, or skills that align with the position..."
     />
-    <p className="text-xs text-gray-500 -mt-4">This helps us understand how your skills fit the role. Be specific but concise.</p>
+    <p className="text-xs text-gray-500 -mt-4">This helps us understand how your skills fit the role. Be specific but concise. Put "N/A" if you don't have relevant experience.</p>
   </div>
 );
 
@@ -367,5 +367,3 @@ const Step4 = ({ formData, handleResetForm, isSubmitted }) => (
     )}
   </div>
 );
-
-

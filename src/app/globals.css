@@ -29,7 +29,6 @@ body {
   letter-spacing: 0.15px;
 }
 
-/* Typography classes based on brand guidelines */
 .font-display {
   font-family: 'Manrope', sans-serif;
   font-weight: 600;
@@ -47,5 +46,3 @@ body {
   font-weight: 400;
   letter-spacing: 0.15px;
 }
-
-/* We are removing the dark mode styles for now to keep it simple */

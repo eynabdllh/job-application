@@ -10,7 +10,6 @@ import Link from "next/link";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 
-// Custom hook for parallax effect
 const useScrollParallax = () => {
   const [offset, setOffset] = useState(0);
   const handleScroll = () => {

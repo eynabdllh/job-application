@@ -12,15 +12,13 @@ export async function POST(request) {
       )
     }
 
-    // Note: admin@lifewood.com/admin123 is handled by frontend hardcoded check
-    // This API route is for additional admin users stored in the database
     
     // Query the admin_users table
     const { data: adminUser, error } = await supabase
       .from('admin_users')
       .select('*')
       .eq('email', email)
-      .eq('password', password) // For now, store plain text passwords
+      .eq('password', password) 
       .single()
 
     if (error || !adminUser) {
@@ -36,7 +34,7 @@ export async function POST(request) {
       .update({ last_login: new Date().toISOString() })
       .eq('id', adminUser.id)
 
-    // Return admin data (without password)
+    // Return admin data 
     const { password: _, ...adminData } = adminUser
     
     return NextResponse.json({

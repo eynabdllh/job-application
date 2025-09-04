@@ -84,7 +84,7 @@ export default function HomePage() {
     <div className="min-h-screen flex flex-col">
       <main className="flex-grow" ref={heroRef}>
         
-        {/* === HERO CONTAINER WITH FADE EFFECT === */}
+        {/* === HERO CONTAINER === */}
         <div className="relative bg-[#F9F7F7]">
           <div className="absolute top-0 left-0 -inset-0 right-0 opacity-40 [mask-image:radial-gradient(ellipse_80%_60%_at_50%_40%,#000_70%,transparent_110%)]">
             <VerticalBarsNoise />
@@ -135,8 +135,6 @@ export default function HomePage() {
           </article>
         </div>
 
-        {/* === NEW DARK SECTION WRAPPER === */}
-        {/* MODIFICATION: This section now wraps all subsequent content and sets the dark background */}
         <section className="bg-[#F9F7F7] relative z-20">
           
           {/* "What Drives Us" Section */}

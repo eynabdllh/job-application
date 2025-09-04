@@ -22,12 +22,12 @@ const theme = createTheme({
     }
   },
   typography: {
-    fontFamily: 'inherit', // This will make MUI use the font from globals.css
+    fontFamily: 'inherit', 
     h2: {
         fontWeight: 'bold',
     },
     h5: {
-        color: '#555555', // Keeping a slightly muted color for the motto
+        color: '#555555', 
     }
   },
 });

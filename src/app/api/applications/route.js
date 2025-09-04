@@ -7,7 +7,6 @@ export async function POST(request) {
     const formData = await request.json()
     console.log('Received form data:', formData)
     
-    // Map form fields to database fields (now using snake_case)
     const applicationData = {
       first_name: formData.first_name,
       last_name: formData.last_name,
@@ -44,15 +43,22 @@ export async function POST(request) {
 
     console.log('Successfully inserted application:', data[0])
 
-    // Fire-and-forget email (do not block response)
+    // Send confirmation email
     const applicant = data[0]
     if (applicant?.email) {
-      sendEmail({
-        to: applicant.email,
-        subject: 'We received your application',
-        html: renderReceivedEmail({ firstName: applicant.first_name }),
-      })
-      .catch((e) => console.error('Send email error:', e))
+      console.log('Attempting to send confirmation email to:', applicant.email);
+      try {
+        const emailResult = await sendEmail({
+          to: applicant.email,
+          subject: 'We received your application',
+          html: renderReceivedEmail({ firstName: applicant.first_name }),
+        });
+        console.log('Email result:', emailResult);
+      } catch (e) {
+        console.error('Send email error:', e);
+      }
+    } else {
+      console.log('No email address found for applicant');
     }
     return NextResponse.json(
       { 
@@ -85,12 +91,10 @@ export async function GET(request) {
       .select('*')
       .order('submitted_at', { ascending: false })
     
-    // Filter by status if provided
     if (status) {
       query = query.eq('status', status)
     }
     
-    // Add pagination
     const from = (page - 1) * limit
     const to = from + limit - 1
     
