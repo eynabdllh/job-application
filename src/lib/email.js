@@ -1,32 +1,34 @@
+import nodemailer from 'nodemailer';
+
 export async function sendEmail({ to, subject, html }) {
   try {
-    const apiKey = process.env.RESEND_API_KEY;
-    if (!apiKey) {
-      console.warn('RESEND_API_KEY not set; skipping email send');
+    const gmailUser = process.env.GMAIL_USER;
+    const gmailPassword = process.env.GMAIL_APP_PASSWORD;
+    
+    if (!gmailUser || !gmailPassword) {
+      console.warn('Gmail credentials not set; skipping email send');
       return { skipped: true };
     }
 
-    // Use the correct format for onboarding@resend.dev
-    const from = 'onboarding@resend.dev';
+    console.log('Attempting to send email:', { to, subject });
 
-    console.log('Attempting to send email:', { to, from, subject });
-
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ from, to, subject, html }),
+    const transporter = nodemailer.createTransporter({
+      service: 'gmail',
+      auth: {
+        user: gmailUser,
+        pass: gmailPassword 
+      }
     });
 
-    const result = await response.json();
-    console.log('Resend API response:', { status: response.status, result });
-    
-    if (!response.ok) {
-      console.error('Resend error:', result);
-      return { error: result };
-    }
+    // Send email
+    const result = await transporter.sendMail({
+      from: `"Lifewood Data Technology" <${gmailUser}>`,
+      to,
+      subject,
+      html
+    });
+
+    console.log('Email sent successfully:', result.messageId);
     return { success: true, result };
   } catch (error) {
     console.error('Email send failed:', error);
