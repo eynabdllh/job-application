@@ -204,7 +204,7 @@ export default function ApplyClient() {
             {step === 4 && <Step4 formData={formData} handleResetForm={handleResetForm} isSubmitted={isSubmitted} />}
 
             <div className="mt-12 pt-6 flex justify-between items-center">
-              <button type="button" onClick={() => { setErrors({}); if (step > 1) setStep(step - 1); }} disabled={step === 1 || isSubmitted} className="text-lg font-semibold text-gray-600 hover:text-black disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+              <button type="button" onClick={handleBack} disabled={step === 1 || isSubmitted} className="text-lg font-semibold text-gray-600 hover:text-black disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                 Back
               </button>
               {step < 4 ? (
@@ -340,7 +340,7 @@ const Step4 = ({ formData, handleResetForm, isSubmitted }) => (
       <p className="text-gray-600">Please confirm your details are correct before submitting.</p>
     </div>
     <div className="space-y-4 bg-gray-50 p-6 rounded-lg border">
-      <div className="grid grid-cols-1 sm-grid-cols-2 gap-x-8 gap-y-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
         <div><strong className="text-gray-500 text-sm">Full Name</strong><p className="text-lg">{formData.first_name} {formData.last_name}</p></div>
         <div><strong className="text-gray-500 text-sm">Email</strong><p className="text-lg break-words">{formData.email}</p></div>
         <div><strong className="text-gray-500 text-sm">Age</strong><p className="text-lg">{formData.age}</p></div>
