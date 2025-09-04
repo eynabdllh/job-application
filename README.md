@@ -1,40 +1,52 @@
-<<<<<<< HEAD
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Lifewood Careers Portal
 
-## Getting Started
+A modern job‑application website built with Next.js (App Router), Tailwind CSS, and Supabase. It includes a public application form and a secure admin dashboard for reviewing, approving, and exporting applications.
 
-First, run the development server:
 
+## Tech Stack
+- Next.js 14 (App Router)
+- React 18
+- Tailwind CSS
+- Supabase (Database + Storage)
+- Date‑Fns, Lucide Icons, XLSX
+
+## Getting Started (Local)
+1) Install dependencies
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Optional: Install from requirements.txt (documentation list)
+```bash
+# Node projects normally use package.json; this mirrors the same deps
+cat requirements.txt | xargs -n 1 npm install --save
+```
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+2) Configure environment variables
+Create a file named `.env.local` in the project root:
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3) Run the dev server
+```bash
+npm run dev
+```
+Visit http://localhost:3000
 
-## Learn More
+## Admin Login
+- Default admin (for demo/testing):
+  - Email: `admin@lifewood.com`
+  - Password: `admin123`
 
-To learn more about Next.js, take a look at the following resources:
+## Supabase Setup
+- Tables used:
+  - `applications`: stores form submissions
+  - `admin_users`: optional, for additional admin accounts
+- Storage bucket:
+  - `resumes`: stores uploaded PDF resumes (publicly accessible via generated URL)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-=======
-# job-application
->>>>>>> ecc0a92334d613945d0330b2ac048ed3d12ed958
+## License
+This project is provided as‑is for internal use. Add your preferred license here if needed.
