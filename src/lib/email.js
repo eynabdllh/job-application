@@ -6,7 +6,10 @@ export async function sendEmail({ to, subject, html }) {
       return { skipped: true };
     }
 
-    const from = process.env.FROM_EMAIL || 'Lifewood <onboarding@resend.dev>';
+    // Use the correct format for onboarding@resend.dev
+    const from = 'onboarding@resend.dev';
+
+    console.log('Attempting to send email:', { to, from, subject });
 
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -18,6 +21,8 @@ export async function sendEmail({ to, subject, html }) {
     });
 
     const result = await response.json();
+    console.log('Resend API response:', { status: response.status, result });
+    
     if (!response.ok) {
       console.error('Resend error:', result);
       return { error: result };
