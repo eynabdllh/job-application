@@ -135,9 +135,9 @@ export default function AdminDashboard() {
     } else if (admin) {
       fetchApplications()
       
-      // Auto-refresh every 3 seconds to check for new applications
+      // Auto-refresh every 3 seconds to check for new applications (silent)
       const refreshInterval = setInterval(() => {
-        fetchApplications()
+        fetchApplications(false) // Silent refresh - no loading spinner
       }, 3000)
 
       return () => {
@@ -146,8 +146,8 @@ export default function AdminDashboard() {
     }
   }, [admin, authLoading, router])
 
-  const fetchApplications = async () => {
-    setLoading(true)
+  const fetchApplications = async (showLoading = true) => {
+    if (showLoading) setLoading(true)
     try {
       const { data, error } = await supabase
         .from('applications')
@@ -157,10 +157,12 @@ export default function AdminDashboard() {
       if (error) throw error;
       setApplications(data || []); 
     } catch (error) {
-      toast.error('Failed to fetch applications.');
+      if (showLoading) {
+        toast.error('Failed to fetch applications.');
+      }
       console.error('Fetch error:', error);
     } finally {
-      setLoading(false);
+      if (showLoading) setLoading(false);
     }
   };
 
