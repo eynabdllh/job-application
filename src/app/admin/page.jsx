@@ -45,13 +45,15 @@ const DetailsModal = ({ open, app, onClose, onViewResume, onUpdateStatus }) => {
     return `${years}`;
   };
   const handleApprove = async () => {
-    await onUpdateStatus(app.id, 'approved');
+    
+    await onUpdateStatus(app.id, 'approved', true);
     onClose();
   };
   const handleReject = async () => {
-    await onUpdateStatus(app.id, 'rejected');
+    await onUpdateStatus(app.id, 'rejected', true);
     onClose();
   };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
@@ -171,31 +173,15 @@ export default function AdminDashboard() {
     }
   };
 
-  const updateApplicationStatus = async (id, newStatus) => {
-    // To prevent multiple simultaneous updates for the same application
-    if (updatingStatus.has(id)) {
-      return;
-    }
-    
-    setUpdatingStatus(prev => new Set(prev).add(id));
-    setRefreshPaused(true); 
+  const updateApplicationStatus = async (id, newStatus, showToast = true) => {
     const originalApplications = [...applications];
     
-    const toastId = `status-update-${id}-${newStatus}-${Date.now()}`;
-    toast.dismiss();
-    
-    if (newStatus === 'approved') {
-      toast.success('Application approved successfully!', { 
-        id: toastId,
-        duration: 3000
-      });
-    } else if (newStatus === 'rejected') {
-      toast.success('Application rejected successfully!', { 
-        id: toastId,
-        duration: 3000
-      });
+    // Show toast immediately for better UX
+    if (showToast) {
+      toast.success(`Application ${newStatus} successfully!`);
     }
     
+    // Update UI optimistically
     setApplications(prev => prev.map(app => (app.id === id ? { ...app, status: newStatus } : app)));
     
     try {
@@ -204,28 +190,26 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus }),
       });
+      
       if (!resp.ok) {
         const err = await resp.json().catch(() => ({}));
         throw new Error(err.error || 'Failed to update');
       }
       
-      
+      // Success - toast already shown, no need to show again
+  
     } catch (error) {
+      // Revert optimistic update on error
       setApplications(originalApplications);
-      console.error('Update error:', error);
- 
-      toast.dismiss(toastId);
-      toast.error('Failed to update application status');
-    } finally {
-      setUpdatingStatus(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(id);
-        return newSet;
-      });
       
-      setTimeout(() => setRefreshPaused(false), 1000);
+      if (showToast) {
+        // Dismiss the success toast and show error
+        toast.dismiss();
+        toast.error('Failed to update status.');
+      }
+      console.error('Update error:', error);
     }
-  };
+  }
   
   const handleViewResume = async (app) => {
     try {
@@ -393,14 +377,17 @@ export default function AdminDashboard() {
     setSelectedIds(prev => checked ? [...prev, id] : prev.filter(x => x !== id))
   }
 
-  const handleViewDetails = async (app) => {
-    setSelectedApp(app)
-    setShowDetailModal(true)
-    if (app.status === 'pending') {
-      await updateApplicationStatus(app.id, 'reviewing')
-      setApplications(prev => prev.map(a => a.id === app.id ? { ...a, status: 'reviewing' } : a))
-    }
+const handleViewDetails = async (app) => {
+  // If the application is currently 'pending', update its status silently.
+  if (app.status === 'pending') {
+    // We pass 'false' for the showToast parameter to prevent a notification.
+    await updateApplicationStatus(app.id, 'reviewing', false);
   }
+  
+  // Now, open the modal with the (potentially updated) application data.
+  setSelectedApp(prevApp => ({ ...prevApp, ...app, status: app.status === 'pending' ? 'reviewing' : app.status }));
+  setShowDetailModal(true);
+};
 
   if (authLoading || !admin) {
     return <div className="min-h-screen bg-[#f5eedb] flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#046241]"></div></div>;
