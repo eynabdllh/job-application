@@ -130,6 +130,7 @@ export default function AdminDashboard() {
   const [updatingStatus, setUpdatingStatus] = useState(new Set())
   const [lastToastId, setLastToastId] = useState(null)
   const [refreshPaused, setRefreshPaused] = useState(false)
+  const [toastLock, setToastLock] = useState(false)
 
   const { admin, loading: authLoading } = useAdminAuth()
   const router = useRouter()
@@ -173,15 +174,46 @@ export default function AdminDashboard() {
     }
   };
 
-  const updateApplicationStatus = async (id, newStatus, showToast = true) => {
-    const originalApplications = [...applications];
-    
-    // Show toast immediately for better UX
-    if (showToast) {
-      toast.success(`Application ${newStatus} successfully!`);
+  const showUniqueToast = (message, type = 'success') => {
+    if (toastLock) {
+      return;
     }
     
-    // Update UI optimistically
+    setToastLock(true);
+    
+    toast.dismiss();
+    toast.dismiss();
+   
+    setTimeout(() => {
+      toast.dismiss();
+      
+      const toastId = `unique-${Date.now()}-${Math.random()}`;
+      
+      if (type === 'success') {
+        toast.success(message, { 
+          id: toastId,
+          duration: 3000
+        });
+      } else {
+        toast.error(message, { 
+          id: toastId,
+          duration: 3000
+        });
+      }
+      
+      setTimeout(() => {
+        setToastLock(false);
+      }, 1500);
+    }, 150);
+  };
+
+  const updateApplicationStatus = async (id, newStatus, showToast = true) => {
+    const originalApplications = [...applications];
+
+    if (showToast) {
+      showUniqueToast(`Application ${newStatus} successfully!`);
+    }
+    
     setApplications(prev => prev.map(app => (app.id === id ? { ...app, status: newStatus } : app)));
     
     try {
@@ -196,16 +228,11 @@ export default function AdminDashboard() {
         throw new Error(err.error || 'Failed to update');
       }
       
-      // Success - toast already shown, no need to show again
-  
     } catch (error) {
-      // Revert optimistic update on error
       setApplications(originalApplications);
       
       if (showToast) {
-        // Dismiss the success toast and show error
-        toast.dismiss();
-        toast.error('Failed to update status.');
+        showUniqueToast('Failed to update status.', 'error');
       }
       console.error('Update error:', error);
     }
@@ -403,6 +430,9 @@ const handleViewDetails = async (app) => {
             background: '#363636',
             color: '#fff',
           },
+        }}
+        containerStyle={{
+          zIndex: 9999,
         }}
       />
       <AdminHeader />
