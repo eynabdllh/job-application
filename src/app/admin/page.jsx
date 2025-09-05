@@ -405,13 +405,10 @@ export default function AdminDashboard() {
   }
 
 const handleViewDetails = async (app) => {
-  // If the application is currently 'pending', update its status silently.
   if (app.status === 'pending') {
-    // We pass 'false' for the showToast parameter to prevent a notification.
     await updateApplicationStatus(app.id, 'reviewing', false);
   }
   
-  // Now, open the modal with the (potentially updated) application data.
   setSelectedApp(prevApp => ({ ...prevApp, ...app, status: app.status === 'pending' ? 'reviewing' : app.status }));
   setShowDetailModal(true);
 };
