@@ -131,6 +131,7 @@ export default function AdminDashboard() {
   const [lastToastId, setLastToastId] = useState(null)
   const [refreshPaused, setRefreshPaused] = useState(false)
   const [toastLock, setToastLock] = useState(false)
+  const [activeToast, setActiveToast] = useState(null)
 
   const { admin, loading: authLoading } = useAdminAuth()
   const router = useRouter()
@@ -150,9 +151,19 @@ export default function AdminDashboard() {
 
       return () => {
         clearInterval(refreshInterval)
+        // Clear any remaining toasts when component unmounts
+        toast.dismiss()
       }
     }
   }, [admin, authLoading, router])
+
+  // Cleanup effect to prevent stale toasts
+  useEffect(() => {
+    return () => {
+      toast.dismiss()
+      setActiveToast(null)
+    }
+  }, [])
 
   const fetchApplications = async (showLoading = true) => {
     if (showLoading) setLoading(true)
@@ -175,19 +186,27 @@ export default function AdminDashboard() {
   };
 
   const showUniqueToast = (message, type = 'success') => {
-    if (toastLock) {
+    // Create a unique key for this specific toast
+    const toastKey = `${type}-${message}`;
+    
+    // If this exact toast is already active, don't show it again
+    if (activeToast === toastKey) {
       return;
     }
     
-    setToastLock(true);
+    // Set the active toast
+    setActiveToast(toastKey);
     
+    // Clear ALL toasts aggressively
     toast.dismiss();
-    toast.dismiss();
-   
-    setTimeout(() => {
+    
+    // Use requestAnimationFrame to ensure DOM is ready
+    requestAnimationFrame(() => {
+      // Clear again
       toast.dismiss();
       
-      const toastId = `unique-${Date.now()}-${Math.random()}`;
+      // Show the new toast
+      const toastId = `toast-${Date.now()}`;
       
       if (type === 'success') {
         toast.success(message, { 
@@ -201,15 +220,19 @@ export default function AdminDashboard() {
         });
       }
       
+      // Clear the active toast after it expires
       setTimeout(() => {
-        setToastLock(false);
-      }, 1500);
-    }, 150);
+        setActiveToast(null);
+      }, 3500);
+    });
   };
 
   const updateApplicationStatus = async (id, newStatus, showToast = true) => {
     const originalApplications = [...applications];
 
+    // Clear any existing toasts first
+    toast.dismiss();
+    
     if (showToast) {
       showUniqueToast(`Application ${newStatus} successfully!`);
     }
@@ -232,6 +255,8 @@ export default function AdminDashboard() {
       setApplications(originalApplications);
       
       if (showToast) {
+        // Clear success toast and show error
+        toast.dismiss();
         showUniqueToast('Failed to update status.', 'error');
       }
       console.error('Update error:', error);
@@ -434,6 +459,8 @@ const handleViewDetails = async (app) => {
         containerStyle={{
           zIndex: 9999,
         }}
+        gutter={8}
+        maxToasts={1}
       />
       <AdminHeader />
       
