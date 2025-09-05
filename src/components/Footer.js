@@ -81,7 +81,7 @@ export default function Footer() {
       <div className="bg-dark-serpent text-white py-6 mt-8" style={{ backgroundColor: '#133020' }}>
         <div className="max-w-6xl mx-auto px-4 text-center">
           <p className="text-white/80 hover:text-white transition-colors duration-300" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-            &copy; 2024 Lifewood Data Technology. All rights reserved.
+            &copy; 2025 Lifewood Data Technology. All rights reserved.
           </p>
         </div>
       </div>
