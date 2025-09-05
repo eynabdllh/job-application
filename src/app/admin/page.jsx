@@ -125,6 +125,7 @@ export default function AdminDashboard() {
   const [editingApp, setEditingApp] = useState(null)
   const [showDetailModal, setShowDetailModal] = useState(false)
   const [selectedApp, setSelectedApp] = useState(null)
+  const [updatingStatus, setUpdatingStatus] = useState(new Set())
 
   const { admin, loading: authLoading } = useAdminAuth()
   const router = useRouter()
@@ -135,10 +136,10 @@ export default function AdminDashboard() {
     } else if (admin) {
       fetchApplications()
       
-      // Auto-refresh every 3 seconds to check for new applications (silent)
+      // Auto-refresh every 5 seconds to check for new applications (silent)
       const refreshInterval = setInterval(() => {
-        fetchApplications(false) // Silent refresh - no loading spinner
-      }, 3000)
+        fetchApplications(false) 
+      }, 5000)
 
       return () => {
         clearInterval(refreshInterval)
@@ -167,8 +168,15 @@ export default function AdminDashboard() {
   };
 
   const updateApplicationStatus = async (id, newStatus) => {
+    // To prevent multiple simultaneous updates for the same application
+    if (updatingStatus.has(id)) {
+      return;
+    }
+    
+    setUpdatingStatus(prev => new Set(prev).add(id));
     const originalApplications = [...applications];
     setApplications(prev => prev.map(app => (app.id === id ? { ...app, status: newStatus } : app)));
+    
     try {
       const resp = await fetch(`/api/applications/${id}`, {
         method: 'PUT',
@@ -180,16 +188,23 @@ export default function AdminDashboard() {
         throw new Error(err.error || 'Failed to update');
       }
       
+      const toastId = `status-update-${id}-${newStatus}`;
       if (newStatus === 'approved') {
-        toast.success('Application approved successfully!');
+        toast.success('Application approved successfully!', { id: toastId });
       } else if (newStatus === 'rejected') {
-        toast.success('Application rejected successfully!');
+        toast.success('Application rejected successfully!', { id: toastId });
       }
       
     } catch (error) {
       setApplications(originalApplications);
       console.error('Update error:', error);
       toast.error('Failed to update application status');
+    } finally {
+      setUpdatingStatus(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(id);
+        return newSet;
+      });
     }
   };
   
@@ -203,7 +218,6 @@ export default function AdminDashboard() {
       console.log('Attempting to view resume:', app.resume_filename);
       console.log('App data:', app);
       
-      // Test bucket access first
       const { data: bucketData, error: bucketError } = await supabase.storage.listBuckets();
       console.log('Available buckets:', bucketData);
       if (bucketError) console.error('Bucket list error:', bucketError);
