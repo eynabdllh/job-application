@@ -126,6 +126,8 @@ export default function AdminDashboard() {
   const [showDetailModal, setShowDetailModal] = useState(false)
   const [selectedApp, setSelectedApp] = useState(null)
   const [updatingStatus, setUpdatingStatus] = useState(new Set())
+  const [lastToastId, setLastToastId] = useState(null)
+  const [refreshPaused, setRefreshPaused] = useState(false)
 
   const { admin, loading: authLoading } = useAdminAuth()
   const router = useRouter()
@@ -138,7 +140,9 @@ export default function AdminDashboard() {
       
       // Auto-refresh every 5 seconds to check for new applications (silent)
       const refreshInterval = setInterval(() => {
-        fetchApplications(false) 
+        if (!refreshPaused) {
+          fetchApplications(false) 
+        }
       }, 5000)
 
       return () => {
@@ -174,7 +178,24 @@ export default function AdminDashboard() {
     }
     
     setUpdatingStatus(prev => new Set(prev).add(id));
+    setRefreshPaused(true); 
     const originalApplications = [...applications];
+    
+    const toastId = `status-update-${id}-${newStatus}-${Date.now()}`;
+    toast.dismiss();
+    
+    if (newStatus === 'approved') {
+      toast.success('Application approved successfully!', { 
+        id: toastId,
+        duration: 3000
+      });
+    } else if (newStatus === 'rejected') {
+      toast.success('Application rejected successfully!', { 
+        id: toastId,
+        duration: 3000
+      });
+    }
+    
     setApplications(prev => prev.map(app => (app.id === id ? { ...app, status: newStatus } : app)));
     
     try {
@@ -188,16 +209,12 @@ export default function AdminDashboard() {
         throw new Error(err.error || 'Failed to update');
       }
       
-      const toastId = `status-update-${id}-${newStatus}`;
-      if (newStatus === 'approved') {
-        toast.success('Application approved successfully!', { id: toastId });
-      } else if (newStatus === 'rejected') {
-        toast.success('Application rejected successfully!', { id: toastId });
-      }
       
     } catch (error) {
       setApplications(originalApplications);
       console.error('Update error:', error);
+ 
+      toast.dismiss(toastId);
       toast.error('Failed to update application status');
     } finally {
       setUpdatingStatus(prev => {
@@ -205,6 +222,8 @@ export default function AdminDashboard() {
         newSet.delete(id);
         return newSet;
       });
+      
+      setTimeout(() => setRefreshPaused(false), 1000);
     }
   };
   
@@ -389,7 +408,16 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-[#f5eedb]">
-      <Toaster position="top-center" />
+      <Toaster 
+        position="top-center" 
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+        }}
+      />
       <AdminHeader />
       
       <main className="w-full mx-auto py-8 px-6 sm:px-12 lg:px-16 xl:px-24 2xl:px-32">
