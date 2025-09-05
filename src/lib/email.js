@@ -45,7 +45,7 @@ function getLogoUrl() {
   return base ? `${base}/lifewood_logo2.png` : 'https://lwfiles.mycourse.app/683d544cf9e3cad852e77ba5-public/f3f91dbfb939c65479b7f97ba33af7a7.png';
 }
 
-function wrapEmail({ title, subtitle, contentHtml }) {
+function wrapEmail({ title, contentHtml }) {
   const logoUrl = getLogoUrl();
   return `
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;padding:0;">
@@ -60,7 +60,6 @@ function wrapEmail({ title, subtitle, contentHtml }) {
           <tr>
             <td style="padding:24px 24px 10px 24px;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;color:${BRAND_DARK};">
               <h1 style="margin:0 0 10px 0;font-size:24px;line-height:1.35;color:${BRAND_DARK};">${title}</h1>
-              ${subtitle ? `<p style=\"margin:0 0 12px 0;font-size:14px;line-height:1.6;color:rgba(19,48,32,0.8);\">${subtitle}</p>` : ''}
             </td>
           </tr>
           <tr>
@@ -96,7 +95,6 @@ export function renderReceivedEmail({ firstName, project }) {
   `;
   return wrapEmail({
     title: 'We received your application',
-    subtitle: 'Your submission is now in our review queue.',
     contentHtml: body,
   });
 }
@@ -105,7 +103,6 @@ export function renderDecisionEmail({ firstName, status, project }) {
   const name = firstName ? ` ${firstName}` : '';
   const approved = status === 'approved';
   const title = approved ? 'Your application was approved' : 'Update on your application';
-  const subtitle = project ? `Project: ${escapeHtml(project)}` : '';
   const body = approved
     ? `
       <p style="margin:0 0 12px 0;font-size:14px;line-height:1.6;color:${BRAND_DARK};">Hello${name},</p>
@@ -117,11 +114,11 @@ export function renderDecisionEmail({ firstName, status, project }) {
     : `
       <p style="margin:0 0 12px 0;font-size:14px;line-height:1.6;color:${BRAND_DARK};">Hello${name},</p>
       <p style="margin:0 0 12px 0;font-size:14px;line-height:1.6;">Thank you for your interest in Lifewood${project ? ` and the <strong>${escapeHtml(project)}</strong> project` : ''}. After a thorough review, we will not be moving forward at this time.</p>
-      <p style="margin:0 0 12px 0;font-size:14px;line-height:1.6;">This decision doesn’t reflect on your potential. Roles open frequently, and your experience may be a strong match for future opportunities. We encourage you to apply again when a suitable role appears.</p>
-      <p style="margin:0 0 12px 0;font-size:14px;line-height:1.6;">If you’d like basic feedback on your application, you can reply to this email and our team will do our best to share helpful pointers.</p>
+      <p style="margin:0 0 12px 0;font-size:14px;line-height:1.6;">This decision doesn't reflect on your potential. Roles open frequently, and your experience may be a strong match for future opportunities. We encourage you to apply again when a suitable role appears.</p>
+      <p style="margin:0 0 12px 0;font-size:14px;line-height:1.6;">If you'd like basic feedback on your application, you can reply to this email and our team will do our best to share helpful pointers.</p>
       <p style="margin:12px 0 0 0;font-size:14px;line-height:1.6;color:${BRAND_GREEN};">Best regards,<br/><strong>Lifewood Recruitment</strong></p>
     `;
-  return wrapEmail({ title, subtitle, contentHtml: body });
+  return wrapEmail({ title, contentHtml: body });
 }
 
 function escapeHtml(str) {
