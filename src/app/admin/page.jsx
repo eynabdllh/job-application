@@ -83,10 +83,12 @@ const DetailsModal = ({ open, app, onClose, onViewResume, onUpdateStatus }) => {
         </div>
         <div className="p-4 border-t flex items-center justify-between">
           <div className="text-sm text-gray-600"/>
-          <div className="flex gap-2">
-            <button onClick={handleReject} className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700">Reject</button>
-            <button onClick={handleApprove} className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700">Approve</button>
-          </div>
+          {!(app.status === 'approved' || app.status === 'rejected') && (
+            <div className="flex gap-2">
+              <button onClick={handleReject} className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700">Reject</button>
+              <button onClick={handleApprove} className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700">Approve</button>
+            </div>
+          )}
         </div>
       </div>
     </div>
