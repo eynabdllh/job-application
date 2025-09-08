@@ -93,7 +93,7 @@ export default function HomePage() {
           <Header/>
           
           <article className="pt-24 pb-32 sm:pt-32 sm:pb-32 w-fit max-w-4xl mx-auto text-center space-y-4 relative z-10">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[120%] text-[#133020]">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[127%] text-[#133020]">
               <VerticalCutReveal
                 splitBy="words"
                 staggerDuration={0.15}
